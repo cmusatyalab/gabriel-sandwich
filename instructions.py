@@ -53,7 +53,7 @@ BREAD = 9
 
 DONE = 10  # This is not a class the DNN will output
 
-Hologram = namedtuple('Hologram', ['dist', 'x', 'y', 'label_index'])
+Hologram = namedtuple('Hologram', ['dist', 'x', 'y'])
 
 HAM_HOLO = Hologram(dist=6500, x=0.5, y=0.36)
 LETTUCE_HOLO = Hologram(dist=6800, x=0.5, y=0.32)
@@ -68,7 +68,7 @@ INSTRUCTIONS = {
     HALF: 'Now put a piece of bread on the lettuce.',
     CUCUMBER: 'This sandwich doesn\'t contain any cucumber. Replace the '
               'cucumber with lettuce.',
-    HAMWRONG: 'That\'s too much meat. Replace the ham with tomatoes.'
+    HAMWRONG: 'That\'s too much meat. Replace the ham with tomatoes.',
     TOMATO: 'You are half done. Now put a piece of tomato on the bread.',
     FULL: 'Now put the bread on top and you will be done.',
     DONE: 'Congratulations! You have made a sandwich!',
@@ -79,7 +79,7 @@ IMAGE_FILENAMES = {
     HAM: 'ham.jpeg',
     LETTUCE: 'lettuce.jpeg',
     HALF: 'half.jpeg',
-    CUCUMBER: 'lettuce.jpeg'
+    CUCUMBER: 'lettuce.jpeg',
     HAMWRONG: 'tomato.jpeg',
     TOMATO: 'tomato.jpeg',
     FULL: 'full.jpeg',
@@ -120,7 +120,7 @@ def _result_with_update(engine_fields, class_idx):
 
 def _start_result(engine_fields):
     engine_fields.sandwich.state = instruction_pb2.Sandwich.State.NOTHING
-    return _result_with_update(BREAD)
+    return _result_with_update(engine_fields, BREAD)
 
 
 def _nothing_result(det_for_class, engine_fields):
@@ -129,7 +129,7 @@ def _nothing_result(det_for_class, engine_fields):
 
     engine_fields.sandwich.state = instruction_pb2.Sandwich.State.BREAD
     hologram_updater = _HologramUpdater(engine_fields)
-    hologram_updater._update_holo_location(det_for_class[BREAD], HAM_HOLO)
+    hologram_updater.update_holo_location(det_for_class[BREAD], HAM_HOLO)
 
     return _result_with_update(engine_fields, HAM)
 
@@ -143,13 +143,13 @@ def _bread_result(det_for_class, engine_fields):
             engine_fields.update_count += 1
 
             hologram_updater = _HologramUpdater(engine_fields)
-            hologram_updater._update_holo_location(
+            hologram_updater.update_holo_location(
                 det_for_class[BREAD], HAM_HOLO)
         return _result_without_update(engine_fields)
 
     engine_fields.sandwich.state = instruction_pb2.Sandwich.State.HAM
     hologram_updater = _HologramUpdater(engine_fields)
-    hologram_updater._update_holo_location(det_for_class[HAM], LETTUCE_HOLO)
+    hologram_updater.update_holo_location(det_for_class[HAM], LETTUCE_HOLO)
 
     return _result_with_update(engine_fields, LETTUCE)
 
@@ -157,7 +157,7 @@ def _bread_result(det_for_class, engine_fields):
 def _lettuce_helper(det_for_class, engine_fields):
     engine_fields.sandwich.state = instruction_pb2.Sandwich.State.LETTUCE
     hologram_updater = _HologramUpdater(engine_fields)
-    hologram_updater._update_holo_location(det_for_class[LETTUCE], BREAD_HOLO)
+    hologram_updater.update_holo_location(det_for_class[LETTUCE], BREAD_HOLO)
     return _result_with_update(engine_fields, HALF)
 
 
@@ -173,14 +173,14 @@ def _ham_result(det_for_class, engine_fields):
     if HAM in det_for_class:
         engine_fields.update_count += 1
         hologram_updater = _HologramUpdater(engine_fields)
-        hologram_updater._update_holo_location(det_for_class[HAM], LETTUCE_HOLO)
+        hologram_updater.update_holo_location(det_for_class[HAM], LETTUCE_HOLO)
     return _result_without_update(engine_fields)
 
 
 def _half_helper(det_for_class, engine_fields):
     engine_fields.sandwich.state = instruction_pb2.Sandwich.State.HALF
     hologram_updater = _HologramUpdater(engine_fields)
-    hologram_updater._update_holo_location(det_for_class[HALF], TOMATO_HOLO)
+    hologram_updater.update_holo_location(det_for_class[HALF], TOMATO_HOLO)
     return _result_with_update(engine_fields, TOMATO)
 
 
@@ -193,7 +193,7 @@ def _lettuce_result(det_for_class, engine_fields):
 
     if LETTUCE in det_for_class:
         hologram_updater = _HologramUpdater(engine_fields)
-        hologram_updater._update_holo_location(
+        hologram_updater.update_holo_location(
             det_for_class[LETTUCE], BREAD_HOLO)
     return _result_without_update(engine_fields)
 
@@ -211,7 +211,7 @@ def _cucumber_result(det_for_class, engine_fields):
 def _tomato_helper(det_for_class, engine_fields):
     engine_fields.sandwich.state = instruction_pb2.Sandwich.State.TOMATO
     hologram_updater = _HologramUpdater(engine_fields)
-    hologram_updater._update_holo_location(
+    hologram_updater.update_holo_location(
         det_for_class[TOMATO], BREAD_TOP_HOLO)
     return _result_with_update(engine_fields, FULL)
 
@@ -229,7 +229,7 @@ def _half_result(det_for_class, engine_fields):
     if HALF in det_for_class:
         engine_fields.update_count += 1
         hologram_updater = _HologramUpdater(engine_fields)
-        hologram_updater._update_holo_location(det_for_class[HALF], TOMATO_HOLO)
+        hologram_updater.update_holo_location(det_for_class[HALF], TOMATO_HOLO)
     return _result_without_update(engine_fields)
 
 
@@ -244,7 +244,7 @@ def _tomato_result(det_for_class, engine_fields):
     if TOMATO in det_for_class:
         engine_fields.update_count += 1
         hologram_updater = _HologramUpdater(engine_fields)
-        hologram_updater._update_holo_location(
+        hologram_updater.update_holo_location(
             det_for_class[TOMATO], BREAD_TOP_HOLO)
     return _result_without_update(engine_fields)
 

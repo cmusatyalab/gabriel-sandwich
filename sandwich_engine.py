@@ -48,7 +48,7 @@ IMAGE_MAX_WH = 640
 CONF_THRESH = 0.5
 NMS_THRESH = 0.3
 
-HIGHEST_CLASS_INDEX = 9
+CLASS_IDX_LIMIT = instructions.BREAD + 1  # Bread has largest index
 
 
 if not os.path.isfile(CAFFEMODEL):
@@ -84,7 +84,7 @@ class SandwichEngine(cognitive_engine.Engine):
 
         det_for_class = {}
         # Start from 1 because 0 is the background
-        for cls_idx in range(1, HIGHEST_CLASS_INDEX):
+        for cls_idx in range(1, CLASS_IDX_LIMIT):
             cls_boxes = boxes[:, 4 * cls_idx : 4 * (cls_idx + 1)]
             cls_scores = scores[:, cls_idx]
 
