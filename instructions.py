@@ -26,21 +26,15 @@ from collections import namedtuple
 
 ENGINE_NAME = "instruction"
 
-# The following code outputs [7, 4, 8, 1, 3, 2, 5, 6, 0]:
-# # build a mapping between faster-rcnn recognized object order to a
-# # standard order
+# Class indexes come from the following code:
 # LABELS = ["bread", "ham", "cucumber", "lettuce", "cheese", "half", "hamwrong",
 #           "tomato", "full"]
-# self._object_mapping = [-1] * len(LABELS)
 # with open(os.path.join('model', 'labels.txt')) as f:
-#     lines = f.readlines()
-#     for idx, line in enumerate(lines):
+#     idx = 1
+#     for line in f:
 #         line = line.strip()
-#         self._object_mapping[idx] = LABELS.index(line)
-# print(self._object_mapping)
-
-# bread is label 0. 0 is in position 8 in the list. Therefore, BREAD = 8 + 1
-# ham is label 1. 1 is in position 3 in the list. Therefor, HAM = 3 + 1
+#         print(line.upper(), '=', idx)
+#         idx += 1
 TOMATO = 1
 CHEESE = 2
 FULL = 3
