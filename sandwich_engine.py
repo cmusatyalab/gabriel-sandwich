@@ -120,9 +120,8 @@ class SandwichEngine(cognitive_engine.Engine):
             img = cv2.resize(img, (0, 0), fx=resize_ratio, fy=resize_ratio,
                              interpolation=cv2.INTER_AREA)
             det_for_class = self._detect_object(img)
-            if objects is not None:
-                for class_idx in det_for_class:
-                    det_for_class[class_idx][:4] /= resize_ratio
+            for class_idx in det_for_class:
+                det_for_class[class_idx][:4] /= resize_ratio
         else:
             det_for_class = self._detect_object(img)
 
