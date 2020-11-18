@@ -239,7 +239,7 @@ def _tomato_result(det_for_class, engine_fields):
         return _result_with_update(engine_fields, DONE)
     elif (HALF in det_for_class) and (TOMATO not in det_for_class):
         # Update state to Half
-        return _half_helper(objects, engine_fields)
+        return _half_helper(det_for_class, engine_fields)
 
     if TOMATO in det_for_class:
         engine_fields.update_count += 1

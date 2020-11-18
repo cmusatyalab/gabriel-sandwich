@@ -120,14 +120,16 @@ class SandwichEngine(cognitive_engine.Engine):
 
             img = cv2.resize(img, (0, 0), fx=resize_ratio, fy=resize_ratio,
                              interpolation=cv2.INTER_AREA)
-            objects = self._detect_object(img)
+            det_for_class = self._detect_object(img)
             if objects is not None:
-                objects[:, :4] /= resize_ratio
+                for class_idx in det_for_class:
+                    det_for_class[class_idx][:4] /= resize_ratio
         else:
-            objects = self._detect_object(img)
+            det_for_class = self._detect_object(img)
 
-        logger.info("object detection result: %s", objects)
-        result_wrapper = instructions.get_instruction(engine_fields, objects)
+        logger.info("object detection result: %s", det_for_class)
+        result_wrapper = instructions.get_instruction(
+            engine_fields, det_for_class)
         result_wrapper.frame_id = from_client.frame_id
         result_wrapper.status = gabriel_pb2.ResultWrapper.Status.SUCCESS
 
