@@ -31,7 +31,7 @@ import cv2
 
 faster_rcnn_root = os.getenv('FASTER_RCNN_ROOT', '.')
 sys.path.append(os.path.join(faster_rcnn_root, "tools"))
-import _init_paths # this is necessary
+import _init_paths  # this is necessary
 from fast_rcnn.config import cfg as faster_rcnn_config
 from fast_rcnn.test import im_detect
 from fast_rcnn.nms_wrapper import nms
@@ -42,8 +42,7 @@ import caffe
 PROTOTXT = 'model/faster_rcnn_test.pt'
 CAFFEMODEL = 'model/model.caffemodel'
 
-# Max image width and height
-IMAGE_MAX_WH = 640
+IMAGE_MAX_WH = 640  # Max image width and height
 
 CONF_THRESH = 0.5
 NMS_THRESH = 0.3
